@@ -9,6 +9,7 @@ open class Menu() {
             println("0. Создать")
             itemList.forEachIndexed { index, item -> println("${index + 1}. Посмотреть $item") }
             println("${itemList.size + 1}. Выход")
+            print("Ваш выбор: ")
 
             val userAction = scanner.nextLine().trim().toIntOrNull()
             when (userAction) {
