@@ -1,4 +1,6 @@
-data class Archive (
+data class Archive(
     var name: String,
-    var notes: MutableMap<Int, Note>? = mutableMapOf()
-)
+    var notes: MutableList<Note> = mutableListOf()
+) {
+    override fun toString(): String = "архив '$name'"
+}

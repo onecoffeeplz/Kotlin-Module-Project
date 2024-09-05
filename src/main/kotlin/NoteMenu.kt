@@ -1,53 +1,31 @@
-fun chooseNoteMenu(archives: MutableMap<Int, Archive>, archiveId: Int) {
-    val archive = archives.getValue(archiveId)
-    println("""
-        [Архив '${archive.name}'] Выберите действие:
-        0. Создать заметку
-    """.trimIndent())
-    archive.notes!!.forEach { (id, note) -> println("$id. Посмотреть '${note.name}'") }
-    println("${archive.notes!!.size + 1}. Назад")
+class NoteMenu(archiveMenu: ArchiveMenu, archive: Archive) {
+    var notes = archive.notes
+    var topMenu = "[Архив '${archive.name}'] Выберите действие:"
+    val noteMenuViewer = Menu()
+    val onSelect: (Note) -> Unit = { note -> showNoteContent(note) }
+    val onCreate: (MutableList<Note>) -> Unit = { notes -> createNote(notes) }
+    val onExit: () -> Unit = { archiveMenu.show() }
 
-    val userAction: Int = getUserChoice(archive.notes!!.size + 1)
-    when (userAction) {
-        -1 -> chooseNoteMenu(archives, archiveId)
-        0 -> createNoteMenu(archives, archiveId)
-        archive.notes!!.size + 1 -> chooseArchiveMenu(archives)
-        else -> {
-            showNoteContentMenu(archives, archiveId, userAction)
-        }
+    fun show() {
+        noteMenuViewer.displayAndRunSelected(
+            topMenu, notes, onSelect = onSelect,
+            onCreate = onCreate, onExit = onExit
+        )
     }
-}
 
-fun createNoteMenu(archives: MutableMap<Int, Archive>, archiveId: Int) {
-    val archiveName : String = archives.getValue(archiveId).name
-    println("""
-        [Создание заметки в архиве '$archiveName'] Выберите действие:
-        0. Задать имя и добавить содержимое
-        1. Назад
-    """.trimIndent())
-
-    val userAction: Int = getUserChoice(1)
-    when (userAction) {
-        0 -> createNote(archives, archiveId)
-        1 -> chooseNoteMenu(archives, archiveId)
-        else -> createNoteMenu(archives, archiveId)
+    fun createNote(notes: MutableList<Note>) {
+        println("Введите название заметки:")
+        val name: String = checkInput(scanner.nextLine().trim())
+        println("Введите содержимое заметки:")
+        val content: String = checkInput(scanner.nextLine().trim())
+        notes.add(Note(name, content))
+        println("Заметка '$name' создана!")
+        show()
     }
-}
 
-fun showNoteContentMenu(archives: MutableMap<Int, Archive>, archiveId: Int, noteId: Int) {
-    val noteName : String = archives.getValue(archiveId).notes!!.getValue(noteId).name
-    println(
-        """
-        [Просмотр заметки '$noteName'] Выберите действие:
-        0. Вывести содержимое
-        1. Назад
-    """.trimIndent()
-    )
-
-    val userAction: Int = getUserChoice(1)
-    when (userAction) {
-        0 -> showNoteContent(archives, archiveId, noteId)
-        1 -> chooseNoteMenu(archives, archiveId)
-        else -> showNoteContentMenu(archives, archiveId, noteId)
+    fun showNoteContent(note: Note) {
+        print("Содержимое заметки '${note.name}': ")
+        println(note.content)
+        show()
     }
 }

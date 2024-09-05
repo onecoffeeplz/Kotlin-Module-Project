@@ -1,35 +1,32 @@
 import kotlin.system.exitProcess
 
-fun chooseArchiveMenu(archives: MutableMap<Int, Archive>) {
-    println("""
-        [Главное меню] Выберите действие:
-        0. Создать архив
-    """.trimIndent())
-    archives.forEach { (id, archive) -> println("$id. Посмотреть '${archive.name}'") }
-    println("${archives.size + 1}. Выйти из программы")
+class ArchiveMenu() {
 
-    val userAction: Int = getUserChoice(archives.size + 1)
-    when (userAction) {
-        -1 -> chooseArchiveMenu(archives)
-        0 -> createArchiveMenu(archives)
-        archives.size + 1 -> exitProcess(0)
-        else -> chooseNoteMenu(archives, userAction)
+    val archives: MutableList<Archive> = mutableListOf()
+
+    val archiveMenuViewer = Menu()
+    val topMenu = "[Главное меню] Выберите действие:"
+    val onSelect: (Archive) -> Unit = { archive -> selectArchive(archive) }
+    val onCreate: (MutableList<Archive>) -> Unit = { archives -> createArchive(archives) }
+    val onExit: () -> Unit = { exitProcess(0) }
+
+    fun show() {
+        archiveMenuViewer.displayAndRunSelected(
+            topMenu, archives, onSelect = onSelect,
+            onCreate = onCreate, onExit = onExit
+        )
     }
-}
 
-fun createArchiveMenu(archives: MutableMap<Int, Archive>) {
-    println("""
-        [Создание архива] Выберите действие:
-        0. Задать имя
-        1. Назад
-    """.trimIndent())
+    fun createArchive(archives: MutableList<Archive>) {
+        println("Введите название архива:")
+        val name: String = checkInput(scanner.nextLine().trim())
+        archives.add(Archive(name))
+        println("Архив '$name' создан!")
+        show()
+    }
 
-    val userAction: Int = getUserChoice(1)
-    when (userAction) {
-        0 -> createArchive(archives)
-        1 -> chooseArchiveMenu(archives)
-        else -> {
-            createArchiveMenu(archives)
-        }
+    fun selectArchive(archive: Archive) {
+        val noteMenuViewer = NoteMenu(this, archive)
+        noteMenuViewer.show()
     }
 }
