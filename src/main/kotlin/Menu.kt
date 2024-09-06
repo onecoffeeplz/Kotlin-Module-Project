@@ -1,4 +1,4 @@
-open class Menu() {
+class Menu() {
 
     fun <T> displayAndRunSelected(
         topMenu: String, itemList: MutableList<T>,

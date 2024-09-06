@@ -1,10 +1,12 @@
 class NoteMenu(archiveMenu: ArchiveMenu, archive: Archive) {
-    var notes = archive.notes
-    var topMenu = "\n[Архив '${archive.name}'] Выберите действие:"
-    val noteMenuViewer = Menu()
-    val onSelect: (Note) -> Unit = { note -> showNoteContent(note) }
-    val onCreate: (MutableList<Note>) -> Unit = { notes -> createNote(notes) }
-    val onExit: () -> Unit = { archiveMenu.show() }
+
+    private var notes = archive.notes
+
+    private val noteMenuViewer = Menu()
+    private var topMenu = "\n[Архив '${archive.name}'] Выберите действие:"
+    private val onSelect: (Note) -> Unit = { note -> showNoteContent(note) }
+    private val onCreate: (MutableList<Note>) -> Unit = { notes -> createNote(notes) }
+    private val onExit: () -> Unit = { archiveMenu.show() }
 
     fun show() {
         noteMenuViewer.displayAndRunSelected(
@@ -13,7 +15,7 @@ class NoteMenu(archiveMenu: ArchiveMenu, archive: Archive) {
         )
     }
 
-    fun createNote(notes: MutableList<Note>) {
+    private fun createNote(notes: MutableList<Note>) {
         println("\nВведите название заметки:")
         val name: String = checkInput(scanner.nextLine().trim())
         println("Введите содержимое заметки:")
@@ -23,7 +25,7 @@ class NoteMenu(archiveMenu: ArchiveMenu, archive: Archive) {
         show()
     }
 
-    fun showNoteContent(note: Note) {
+    private fun showNoteContent(note: Note) {
         print("\nСодержимое заметки '${note.name}': ")
         println(note.content)
         show()
